@@ -38,7 +38,7 @@ export const Tree = <T extends TreeItemData = TreeItemData>({
     initState(data, defaultExpanded)
   );
   useEffect(() => {
-    dispatch({ type: "initState", data, defaultExpanded });
+    dispatch({ type: "updateData", data });
   }, [data, defaultExpanded]);
   const handleClick = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {

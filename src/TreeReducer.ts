@@ -12,7 +12,7 @@ type State = {
 
 type Action = { type: "click"; path: string; } |
 { type: "keydown"; path: string; key: string; } |
-{ type: 'initState'; data: TreeItemData[]; defaultExpanded?: boolean };
+{ type: "updateData"; data: TreeItemData[]; defaultExpanded?: boolean };
 
 export function initState<T extends TreeItemData>(
   data: T[],
@@ -36,6 +36,7 @@ export function initState<T extends TreeItemData>(
     const path = i.toString();
     const hasChild = !!x.children?.length;
     stateMap[path] = {
+      // Make first element of the first root node default to be highlighted
       highlighted: i === 0,
       selected: false,
       expanded: hasChild && defaultExpanded,
@@ -206,7 +207,28 @@ const highlightFirstChildNode = (stateMap: TreeStateMap, nodePath: string): Tree
   return newStateMap;
 }
 
+const updateData = <T extends TreeItemData>(
+  stateMap: TreeStateMap,
+  newData: T[]
+): TreeStateMap => {
+  const newStateMap: TreeStateMap = {};
 
+  const loopData = (x: T, i: number, depth: number, path: string) => {
+    const newPath = depth < 0 ? i.toString() : path + "-" + i.toString();
+    const newDepth = depth + 1;
+    const hasChild = Array.isArray(x.children) && x.children.length > 0;
+    newStateMap[newPath] = {
+      ...stateMap[newPath], // Keep existing states like highlight and selected
+      hasChild,
+      depth: newDepth,
+    };
+    x.children?.forEach((child, index) =>
+      loopData(child, index, newDepth, newPath)
+    );
+  };
+  newData.forEach((child, index) => loopData(child, index, -1, ""));
+  return newStateMap;
+};
 
 export function reducer(state: State, action: Action): State {
   // console.log(action);
@@ -251,9 +273,9 @@ export function reducer(state: State, action: Action): State {
       }
       return state;
     }
-    case "initState": {
-      console.log("new initState")
-      return initState(action.data, action.defaultExpanded);
+    case "updateData": {
+      // console.log("reducer updateData");
+      return { stateMap: updateData(state.stateMap, action.data) };
     }
   }
 }
