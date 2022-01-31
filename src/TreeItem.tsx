@@ -85,6 +85,7 @@ export const TreeItem = <T extends TreeItemData>({
     stateMap,
     focused,
     TreeItemNode = BasicTreeItemNode,
+    onItemSelected,
   } = useContext(TreeContext);
   const itemState = stateMap[path];
   const { expanded, selected, depth = 0, highlighted } = itemState || {}; // {} when data is empty
@@ -96,6 +97,11 @@ export const TreeItem = <T extends TreeItemData>({
       itemRef.current.focus();
     }
   }, [highlighted, path, focused]);
+  useEffect(() => {
+    if (selected) {
+      onItemSelected?.(data.id);
+    }
+  }, [data.id, onItemSelected, selected]);
 
   if (itemState === undefined) {
     console.warn("item null", itemState, path);

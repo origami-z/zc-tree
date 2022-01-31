@@ -23,6 +23,7 @@ export interface TreeProps<T extends TreeItemData = TreeItemData>
   onKeyDown?: (e: KeyboardEvent<HTMLDivElement>, itemId?: string) => void;
   // TODO: move `any` to use generics based on `TreeItemData`
   TreeItemNode?: ForwardRefExoticComponent<any>;
+  onItemSelected?: (itemId: string) => void;
 }
 
 export const Tree = <T extends TreeItemData = TreeItemData>({
@@ -34,6 +35,7 @@ export const Tree = <T extends TreeItemData = TreeItemData>({
   onFocus: onFocusProp,
   onBlur: onBlurProp,
   TreeItemNode,
+  onItemSelected,
   ...restProps
 }: TreeProps<T>) => {
   const [focused, setFocused] = useState(false);
@@ -97,7 +99,9 @@ export const Tree = <T extends TreeItemData = TreeItemData>({
       onBlur={handleBlur}
       {...restProps}
     >
-      <TreeContext.Provider value={{ stateMap, focused, TreeItemNode }}>
+      <TreeContext.Provider
+        value={{ stateMap, focused, TreeItemNode, onItemSelected }}
+      >
         {data.map((x, i) => (
           <TreeItem key={`${x.label}-${i}`} data={x} path={i.toString()} />
         ))}

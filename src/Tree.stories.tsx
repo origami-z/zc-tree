@@ -1,5 +1,11 @@
 import cn from "classnames";
-import React, { ForwardedRef, forwardRef, useMemo, useState } from "react";
+import React, {
+  ForwardedRef,
+  forwardRef,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 
@@ -11,6 +17,7 @@ import styles from "./Tree.stories.module.css";
 export default {
   title: "Tree",
   component: Tree,
+  argTypes: { onItemSelected: { action: "item selected" } },
 } as ComponentMeta<typeof Tree>;
 
 const exampleData: TreeItemData[] = [
@@ -187,10 +194,7 @@ const customTypeData: CustomTreeItemData[] = [
 ];
 
 export const Example: ComponentStory<typeof Tree> = (args) => {
-  const handleClick = (_: unknown, itemId?: string) => {
-    console.log("Item clicked Id", itemId);
-  };
-  return <Tree {...args} data={exampleData} onClick={handleClick} />;
+  return <Tree {...args} data={exampleData} />;
 };
 
 Example.args = {
@@ -206,9 +210,6 @@ export const ToggleData: ComponentStory<typeof Tree> = (args) => {
       return exampleData2;
     }
   }, [dataSetNumber]);
-  const handleClick = (_: unknown, itemId?: string) => {
-    console.log("Item clicked Id", itemId);
-  };
   return (
     <div>
       <button onClick={() => setDataSetNumber((x) => (x === 1 ? 2 : 1))}>
@@ -217,7 +218,6 @@ export const ToggleData: ComponentStory<typeof Tree> = (args) => {
       <Tree
         {...args}
         data={dataSet}
-        onClick={handleClick}
         key={dataSetNumber} // Use different key to rerender a new instance
       />
     </div>
@@ -252,9 +252,6 @@ const filterTreeData = (data: TreeItemData[], text: string): TreeItemData[] => {
 
 export const FilterData: ComponentStory<typeof Tree> = (args) => {
   const [filterString, setFilterString] = useState("");
-  const handleClick = (_: unknown, itemId?: string) => {
-    console.log("Item clicked Id", itemId);
-  };
   const filteredData = useMemo(
     () => filterTreeData(exampleData2, filterString),
     [filterString]
@@ -273,7 +270,6 @@ export const FilterData: ComponentStory<typeof Tree> = (args) => {
         key={filterString} // Use different key to rerender a new instance
         defaultExpanded={filterString ? true : args.defaultExpanded}
         data={filteredData}
-        onClick={handleClick}
       />
     </div>
   );
