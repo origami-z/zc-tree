@@ -290,13 +290,13 @@ const CustomTreeItemNodeBase = (
     treeFocused,
     ...restProps
   }: BasicTreeItemNodeProps<CustomTreeItemData>,
-  ref: ForwardedRef<HTMLDivElement>
+  ref: ForwardedRef<HTMLLIElement>
 ) => {
   const leafNode = !data.children?.length;
   const icon = !leafNode ? (expanded ? "▼" : "▶") : null;
 
   return (
-    <div
+    <li
       className={cn(styles.treeItem, {
         [styles.treeItemHighlighted]: highlighted && treeFocused,
         [styles.treeItemSelected]: selected,
@@ -308,7 +308,7 @@ const CustomTreeItemNodeBase = (
       {icon}
       {data.label}
       {data.loading ? "⌛" : null}
-    </div>
+    </li>
   );
 };
 

@@ -20,9 +20,16 @@
   --tree-item-depth: calc(var(--tree-item-indent-base) * 7);
 }
 
+.treeItemGroup {
+  padding-inline-start: 0;
+  list-style-type: none;
+  margin-block: 0;
+}
+
 .treeItem {
   --tree-item-indent-base: 16px;
   padding-inline-start: var(--tree-item-depth, 0px);
+  list-style: none;
 }
 
 .treeItemHighlighted {

@@ -28,7 +28,7 @@ export interface TreeItemState {
 
 export interface BasicTreeItemNodeProps<T extends TreeItemData>
   extends TreeItemState,
-    HTMLAttributes<HTMLDivElement> {
+    HTMLAttributes<HTMLLIElement> {
   data: T;
   treeFocused?: boolean;
 }
@@ -44,13 +44,13 @@ const BasicTreeItemNodeBase = <T extends TreeItemData>(
     treeFocused,
     ...restProps
   }: BasicTreeItemNodeProps<T>,
-  ref: ForwardedRef<HTMLDivElement>
+  ref: ForwardedRef<HTMLLIElement>
 ) => {
   const leafNode = !data.children?.length;
   const icon = !leafNode ? (expanded ? "▼" : "▶") : null;
 
   return (
-    <div
+    <li
       className={cn(styles.treeItem, {
         [styles.treeItemHighlighted]: highlighted && treeFocused,
         [styles.treeItemSelected]: selected,
@@ -61,7 +61,7 @@ const BasicTreeItemNodeBase = <T extends TreeItemData>(
     >
       {icon}
       {data.label}
-    </div>
+    </li>
   );
 };
 
@@ -69,7 +69,7 @@ export const BasicTreeItemNode = forwardRef(BasicTreeItemNodeBase);
 BasicTreeItemNode.displayName = "BasicTreeItemNode";
 
 export interface TreeItemProps<T extends TreeItemData> // TreeItemState,
-  extends HTMLAttributes<HTMLDivElement> {
+  extends HTMLAttributes<HTMLUListElement> {
   // expose `classes` to make styles customizable. Or not use css module
   data: T; // Generics to make sure custom TreeItem can use more data
   // itemComponent? ...
@@ -79,6 +79,7 @@ export interface TreeItemProps<T extends TreeItemData> // TreeItemState,
 export const TreeItem = <T extends TreeItemData>({
   data,
   path,
+  className,
   ...restProps
 }: TreeItemProps<T>) => {
   const {
@@ -90,7 +91,7 @@ export const TreeItem = <T extends TreeItemData>({
   const itemState = stateMap[path];
   const { expanded, selected, depth = 0, highlighted } = itemState || {}; // {} when data is empty
 
-  const itemRef = useRef<HTMLDivElement>(null);
+  const itemRef = useRef<HTMLLIElement>(null);
   useEffect(() => {
     if (focused && highlighted && itemRef.current) {
       console.log("focus item", path);
@@ -108,7 +109,11 @@ export const TreeItem = <T extends TreeItemData>({
     return null;
   }
   return (
-    <div role="group" {...restProps}>
+    <ul
+      role="group"
+      className={cn(styles.treeItemGroup, className)}
+      {...restProps}
+    >
       <TreeItemNode
         treeFocused={focused}
         data={data}
@@ -134,6 +139,6 @@ export const TreeItem = <T extends TreeItemData>({
             />
           ))
         : null}
-    </div>
+    </ul>
   );
 };
